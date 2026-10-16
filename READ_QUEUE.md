@@ -1,10 +1,5 @@
 # AXI Write Buffer Using SystemVerilog Queues
 
-https://img.shields.io/badge/SystemVerilog-Verification-blue
-https://img.shields.io/badge/Data%20Structure-Queue-green
-https://img.shields.io/badge/VLSI-Verification-orange
-https://img.shields.io/badge/License-MIT-lightgrey
-
 ## Overview
 
 This project demonstrates the implementation of an **AXI Write Transaction Buffer** using **SystemVerilog Queues**.
