@@ -1,288 +1,195 @@
-# lakshman_vlsi
-# AXI Transaction Tracker using SystemVerilog Associative Arrays
+# SystemVerilog Associative Array and Queue
 
-## Overview
+A simulation example demonstrating associative-array methods and queue operations for verification interviews and practice.
 
-This project demonstrates the implementation of an **AXI Outstanding Transaction Tracker** using **SystemVerilog Associative Arrays**.
+## Objective
 
-Associative arrays are widely used in VLSI Verification environments such as:
+Store 8-bit transaction data by integer ID in an associative array, and demonstrate how a queue can record transaction arrival order.
 
-- UVM Scoreboards
-- AXI Transaction Tracking
-- Memory Models
-- Cache Models
-- Register Databases
-- Reference Models
+| Declaration | Purpose |
+| --- | --- |
+| `logic [7:0] tr_id[int];` | Associative array: integer keys, 8-bit data values |
+| `int tr_order[$];` | Unbounded queue of integer transaction IDs |
+| `int axi_id;` | Variable used for key navigation |
 
-In this example, AXI Transaction IDs are used as associative array indexes, and transaction types are stored as values.
+The queue uses `int` to match the associative-array key type. The original 8-bit queue works for the small IDs shown, but truncates IDs outside its unsigned 8-bit range.
 
----
-
-## Problem Statement
-
-An AXI protocol allows multiple outstanding transactions to exist simultaneously. Verification environments must track these transactions until their corresponding responses are received.
-
-Implement an Associative Array-based database to:
-
-- Store transactions using Transaction ID as the key.
-- Search transactions efficiently.
-- Navigate through stored transactions.
-- Remove completed transactions.
-- Monitor the number of active transactions.
-
----
-
-## Features Demonstrated
-
-| Method | Description |
-|----------|-------------|
-| `num()` | Returns number of entries |
-| `foreach` | Iterates through all entries |
-| `first()` | Returns first index |
-| `last()` | Returns last index |
-| `next()` | Returns next valid index |
-| `prev()` | Returns previous valid index |
-| `exists()` | Checks whether an index exists |
-| `delete(index)` | Removes a specific entry |
-
----
-
-## Associative Array Declaration
+## Corrected Method Demonstration
 
 ```systemverilog
-typedef logic [15:0] transaction_t[int];
-transaction_t transaction_types;
-```
-
-### Key
-
-```text
-AXI Transaction ID (int)
-```
-
-### Value
-
-```text
-Transaction Type (16-bit Logic Data)
-```
-
----
-
-## Transaction Database
-
-| Transaction ID | Transaction Type |
-|---------------|------------------|
-| 101 | 0xAA |
-| 105 | 0xBB |
-| 106 | 0xDD |
-| 109 | 0xCC |
-
----
-
-## Source Code
-
-```systemverilog
-module axi_transaction_order;
-
-  typedef logic [15:0] transaction_t[int];
-  transaction_t transaction_types;
-
+module associative_queue_array;
+  logic [7:0] tr_id[int];
+  int tr_order[$];
   int axi_id;
+  int removed_id;
 
   initial begin
+    $display("Initial entries = %0d", tr_id.num());
+    $display("Initial queue size = %0d", tr_order.size());
 
-    $display(" INTIAL_TRANSACTION = %0h",
-             transaction_types.num());
+    tr_id[5] = 9;
+    tr_id[8] = 10;
+    tr_id[6] = 45;
+    tr_id[4] = 67;
+    tr_order = {5, 8, 6, 4};
+    $display("Queue size = %0d", tr_order.size());
 
-    transaction_types[101] = 'hAA;
-    transaction_types[105] = 'hBB;
-    transaction_types[109] = 'hCC;
-    transaction_types[106] = 'hDD;
+    foreach (tr_id[id])
+      $display("tr_id[%0d] = %0d", id, tr_id[id]);
 
-    $display(" AFTER_TRANSACTION = %0h",
-             transaction_types.num());
+    if (tr_id.first(axi_id))
+      $display("First: ID=%0d DATA=%0d", axi_id, tr_id[axi_id]);
+    if (tr_id.last(axi_id))
+      $display("Last: ID=%0d DATA=%0d", axi_id, tr_id[axi_id]);
+    if (tr_id.prev(axi_id))
+      $display("Previous: ID=%0d DATA=%0d", axi_id, tr_id[axi_id]);
+    if (tr_id.next(axi_id))
+      $display("Next: ID=%0d DATA=%0d", axi_id, tr_id[axi_id]);
 
-    foreach(transaction_types[axi_id])
-      $display(" FOR_TRANSACTION[%0d] = %0h",
-                axi_id,
-                transaction_types[axi_id]);
-
-    transaction_types.first(axi_id);
-    $display("FIRST_ID = %0d TRANS_TY = %0h",
-              axi_id,
-              transaction_types[axi_id]);
-
-    transaction_types.last(axi_id);
-    $display("LAST_ID = %0d TRANS_TY = %0h",
-              axi_id,
-              transaction_types[axi_id]);
-
-    transaction_types.next(axi_id);
-    $display("NEXT_ID = %0d TRANS_TY = %0h",
-              axi_id,
-              transaction_types[axi_id]);
-
-    transaction_types.prev(axi_id);
-    $display("PREV_ID = %0d TRANS_TY = %0h",
-              axi_id,
-              transaction_types[axi_id]);
-
-    if(transaction_types.exists(107))
-      $display("Read transaction found");
+    tr_id.delete(8);
+    if (tr_id.exists(8))
+      $display("ID 8 is not deleted");
     else
-      $display("Read transaction not found");
+      $display("ID 8 is deleted");
 
-    if(transaction_types.exists(106))
-      $display("Transaction 106 found");
-
-    if(transaction_types.exists(105))
-      $display("Write transaction found");
-
-    transaction_types.delete(105);
-
-    if(transaction_types.exists(105))
-      $display("Transaction still exists");
-    else
-      $display("Transaction deleted successfully");
-
-    foreach(transaction_types[axi_id])
-      $display("After Deletion [%0d] = %0h",
-                axi_id,
-                transaction_types[axi_id]);
-
+    tr_order.insert(1, 78);
+    $display("Insert: %p size=%0d", tr_order, tr_order.size());
+    tr_order.push_front(100);
+    $display("Push front: %p size=%0d", tr_order, tr_order.size());
+    removed_id = tr_order.pop_back();
+    $display("Pop back: removed=%0d queue=%p size=%0d",
+             removed_id, tr_order, tr_order.size());
+    tr_order.push_back(50);
+    $display("Push back: %p size=%0d", tr_order, tr_order.size());
+    removed_id = tr_order.pop_front();
+    $display("Pop front: removed=%0d queue=%p size=%0d",
+             removed_id, tr_order, tr_order.size());
+    $finish;
   end
-
 endmodule
 ```
 
----
+Save the code as `associative_queue_array.sv` and select `associative_queue_array` as the simulation top in a SystemVerilog simulator supporting associative arrays and queues. This is a testbench example, intended for simulation.
 
-## Expected Output
+## Expected Results
 
-```text
-INTIAL_TRANSACTION = 0
-
-AFTER_TRANSACTION = 4
-
-FOR_TRANSACTION[101] = aa
-FOR_TRANSACTION[105] = bb
-FOR_TRANSACTION[106] = dd
-FOR_TRANSACTION[109] = cc
-
-FIRST_ID = 101 TRANS_TY = aa
-
-LAST_ID = 109 TRANS_TY = cc
-
-Read transaction not found
-
-Transaction 106 found
-
-Write transaction found
-
-Transaction deleted successfully
-
-After Deletion [101] = aa
-After Deletion [106] = dd
-After Deletion [109] = cc
-```
-
----
-
-## Learning Outcomes
-
-After completing this project, you will understand:
-
-- Associative Array declaration
-- Integer-indexed arrays
-- Transaction database modeling
-- Runtime lookup operations
-- Transaction existence checking
-- Dynamic transaction deletion
-- Traversing associative arrays
-- Scoreboard-style transaction management
-
----
-
-## Verification Use Cases
-
-### AXI Scoreboards
-
-```systemverilog
-if(txn_db.exists(id))
-```
-
-Verify outstanding transaction existence.
-
----
-
-### Memory Models
-
-```systemverilog
-memory[address] = data;
-```
-
-Store only valid addresses to save memory.
-
----
-
-### Cache Verification
-
-```systemverilog
-cache[tag] = cache_line;
-```
-
-Implement sparse cache storage.
-
----
-
-### Register Databases
-
-```systemverilog
-reg_db[address] = reg_value;
-```
-
-Track programmed register values.
-
----
-
-## Key Interview Questions
-
-### Why use Associative Arrays instead of Dynamic Arrays?
-
-**Answer:**
-
-Associative Arrays are preferred when indexes are sparse or non-sequential.
-
-Example:
+The following results are derived from the code; they are not a captured simulator log. Queue formatting with `%p` can vary by simulator.
 
 ```text
-101
-105
-106
-109
+Initial entries = 0
+Initial queue size = 0
+Queue size = 4
+tr_id[4] = 67
+tr_id[5] = 9
+tr_id[6] = 45
+tr_id[8] = 10
+First: ID=4 DATA=67
+Last: ID=8 DATA=10
+Previous: ID=6 DATA=45
+Next: ID=8 DATA=10
+ID 8 is deleted
 ```
 
-Using Dynamic Arrays would waste memory because intermediate locations must be allocated. Associative Arrays allocate memory only for the used indexes.
+| Operation | Queue after operation | Size | Removed ID |
+| --- | --- | --- | --- |
+| Initial assignment | `{5, 8, 6, 4}` | 4 | — |
+| `insert(1, 78)` | `{5, 78, 8, 6, 4}` | 5 | — |
+| `push_front(100)` | `{100, 5, 78, 8, 6, 4}` | 6 | — |
+| `pop_back()` | `{100, 5, 78, 8, 6}` | 5 | 4 |
+| `push_back(50)` | `{100, 5, 78, 8, 6, 50}` | 6 | — |
+| `pop_front()` | `{5, 78, 8, 6, 50}` | 5 | 100 |
 
----
+## How the Methods Work
 
-### What is the advantage of `exists()`?
+| Method | Behavior |
+| --- | --- |
+| `tr_id.num()` | Number of existing associative-array entries |
+| `tr_id.exists(id)` | Returns 1 if the key exists, otherwise 0 |
+| `tr_id.first(id)` | Writes the smallest integer key to `id` on success |
+| `tr_id.last(id)` | Writes the largest integer key to `id` on success |
+| `tr_id.prev(id)` | Moves to the next smaller existing key on success |
+| `tr_id.next(id)` | Moves to the next larger existing key on success |
+| `tr_id.delete(id)` | Removes one associative-array entry |
+| `tr_order.size()` | Number of queue elements |
+| `tr_order.insert(index, value)` | Inserts a value at the given queue index |
+| `push_front(value)` / `push_back(value)` | Adds an element at the front / back |
+| `pop_front()` / `pop_back()` | Removes and returns the front / back element |
 
-**Answer:**
+Navigation methods return a success status. Check it before using the resulting key. Check queue size before popping when the queue may be empty.
 
-It prevents access to non-existent entries.
+## Corrections to the Original Code
+
+1. Reverse the deletion messages: `exists(8)` being true means ID 8 is still present.
+2. Capture the values returned by `pop_front()` and `pop_back()`, or explicitly discard them using `void'(...)`.
+3. Check navigation return values instead of ignoring possible failure.
+4. Use integer queue elements when they represent integer associative-array keys.
+5. Remember that changing either structure does not automatically update the other.
+
+The method demonstration intentionally manipulates the queue independently. After deleting associative-array key 8, ID 8 remains in the queue. IDs 78, 100, and 50 also have no associated data entry. This is useful for learning methods but is not a synchronized transaction tracker.
+
+## Practical Example: Process in Arrival Order
+
+This version connects the two structures. Each insertion adds both the transaction data and its ID; each processing step removes both.
 
 ```systemverilog
-if(txn_db.exists(id))
-  data = txn_db[id];
+module transaction_tracking_example;
+  logic [7:0] tr_id[int];
+  int tr_order[$];
+  int axi_id;
+
+  initial begin
+    tr_id[5] = 9;  tr_order.push_back(5);
+    tr_id[8] = 10; tr_order.push_back(8);
+    tr_id[6] = 45; tr_order.push_back(6);
+    tr_id[4] = 67; tr_order.push_back(4);
+
+    while (tr_order.size() > 0) begin
+      axi_id = tr_order.pop_front();
+      if (tr_id.exists(axi_id)) begin
+        $display("Processing ID=%0d DATA=%0d", axi_id, tr_id[axi_id]);
+        tr_id.delete(axi_id);
+      end
+      else
+        $error("Missing transaction for ID=%0d", axi_id);
+    end
+    $display("Remaining entries=%0d queue size=%0d",
+             tr_id.num(), tr_order.size());
+    $finish;
+  end
+endmodule
 ```
 
-This avoids runtime warnings and improves verification robustness.
+Expected output:
 
----
+```text
+Processing ID=5 DATA=9
+Processing ID=8 DATA=10
+Processing ID=6 DATA=45
+Processing ID=4 DATA=67
+Remaining entries=0 queue size=0
+```
 
-## Author
+## Interview Explanation
 
-**Lakshman Junnu**  
-VLSI Design & Verification Engineer  
-SystemVerilog | UVM | AXI | APB | FIFO | SRAM | Protocol Verification
+> I use an associative array to store transaction data indexed by transaction ID, and a queue to preserve arrival order. The associative array supports lookup by ID, while popping the queue selects the next transaction to process. I explicitly update both structures to keep them consistent.
+
+### Common Questions
+
+**Does an associative array preserve insertion order?**  
+For integer keys, traversal follows numerical key order. In this example it visits 4, 5, 6, 8 even though insertion was 5, 8, 6, 4.
+
+**Does deleting a key remove its ID from the queue?**  
+No. They are separate variables and require separate updates.
+
+**What happens if the same ID is assigned again?**  
+Its existing data is overwritten. This design assumes one outstanding stored transaction per ID.
+
+**Is this a complete AXI scoreboard?**  
+No. It demonstrates storage and ordering concepts. AXI responses can complete out of order across IDs, so a scoreboard should match responses using the appropriate ID. Multiple outstanding transactions sharing an ID need per-ID queues or another suitable representation; one global FIFO cannot model every AXI ordering case.
+
+**Why use both structures?**  
+The associative array answers “What data belongs to this ID?” The queue answers “Which ID arrived next?”
+
+## GitHub Use
+
+Create a repository and upload this file as `README.md`. Optionally save the two code blocks as separate `.sv` files. Run each module as its own simulation top because each calls `$finish`.
