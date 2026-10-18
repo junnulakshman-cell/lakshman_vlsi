@@ -1,0 +1,72 @@
+# AXI Transaction Tracker — Associative Array Example
+
+This repository contains a simple SystemVerilog example demonstrating the use of associative arrays to implement an AXI outstanding transaction tracker.
+
+File: axi_transaction_order.sv
+
+Description
+- Demonstrates associative array methods and typical use in AXI transaction tracking, scoreboards, and memory models.
+- Shows insertion, iteration, lookup, navigation, and deletion of associative-array entries keyed by AXI transaction ID.
+
+Associative array methods used
+1. num()        — number of active entries
+2. foreach      — iterate entries
+3. first()      — get lowest key
+4. last()       — get highest key
+5. next()       — get next key after current
+6. prev()       — get previous key before current
+7. exists()     — check if a key exists
+8. delete(index)— remove an entry
+
+Module overview
+- Module name: axi_transaction_order
+- Key type: int (AXI transaction ID)
+- Value type: logic [15:0] (transaction type)
+- The example inserts several transactions, demonstrates traversal and lookup, deletes one entry, and prints remaining entries.
+
+How to run
+- Requires a SystemVerilog simulator (VCS, Questa/ModelSim, or similar).
+
+Using Synopsys VCS
+1. Compile:
+   vcs -sverilog axi_transaction_order.sv -o simv
+2. Run:
+   ./simv +vcs+vcdpluson
+
+Using Mentor Questa/ModelSim
+1. Compile:
+   vlog +acc axi_transaction_order.sv
+2. Run:
+   vsim -c -do "run -all; quit" work.axi_transaction_order
+
+Expected console output (example)
+- The exact ordering of foreach may vary by simulation, but associative-array navigation functions return deterministic first/last/next/prev based on key ordering.
+
+Sample output (representative):
+
+INITIAL_TRANSACTION = 0
+AFTER_TRANSACTION = 4
+FOR_TRANSACTION[101] = aa
+FOR_TRANSACTION[105] = bb
+FOR_TRANSACTION[106] = dd
+FOR_TRANSACTION[109] = cc
+FIRST_ID = 101 TRANS_TY = aa
+LAST_ID = 109 TRANS_TY = cc
+NEXT_ID = 109 TRANS_TY = cc
+PREV_ID = 105 TRANS_TY = bb
+READ Transaction Not Found
+BURST_WRITE Transaction Found
+WRITE Transaction Found
+WRITE Transaction Successfully Deleted
+
+Remaining Transactions After Deletion
+TRANSACTION[101] = aa
+TRANSACTION[106] = dd
+TRANSACTION[109] = cc
+
+Notes
+- The example code is intended for educational/demo purposes.
+- Rename the file or integrate into a testbench as needed.
+
+License
+- Add a license file to the repo if you want to clarify reuse permissions.
