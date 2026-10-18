@@ -1,59 +1,98 @@
 # AXI Transaction Tracker — Associative Array Example
 
-This repository contains a simple SystemVerilog example demonstrating the use of associative arrays to implement an AXI outstanding transaction tracker.
+## 📌 Overview
 
-File: axi_transaction_order.sv
+This repository demonstrates how to use **SystemVerilog associative arrays** to track AXI transactions using transaction IDs.
 
-Description
-- Demonstrates associative array methods and typical use in AXI transaction tracking, scoreboards, and memory models.
-- Shows insertion, iteration, lookup, navigation, and deletion of associative-array entries keyed by AXI transaction ID.
+Associative arrays are useful in verification environments where transactions must be stored, searched, monitored, and deleted dynamically. They are commonly used in scoreboards, reference models, memory models, and outstanding transaction trackers.
 
-Associative array methods used
-1. num()        — number of active entries
-2. foreach      — iterate entries
-3. first()      — get lowest key
-4. last()       — get highest key
-5. next()       — get next key after current
-6. prev()       — get previous key before current
-7. exists()     — check if a key exists
-8. delete(index)— remove an entry
+**Source file:** `axi_transaction_order.sv`
 
-Module overview
-- Module name: axi_transaction_order
-- Key type: int (AXI transaction ID)
-- Value type: logic [15:0] (transaction type)
-- The example inserts several transactions, demonstrates traversal and lookup, deletes one entry, and prints remaining entries.
+## 🎯 Objectives
 
-How to run
-- Requires a SystemVerilog simulator (VCS, Questa/ModelSim, or similar).
+- Understand associative arrays in SystemVerilog.
+- Store transaction information using AXI transaction IDs as keys.
+- Insert, search, iterate, navigate, and delete entries.
+- Practice associative-array methods for RTL design verification interviews.
+- Understand how associative arrays can help track outstanding transactions.
 
-Using Synopsys VCS
-1. Compile:
-   vcs -sverilog axi_transaction_order.sv -o simv
-2. Run:
-   ./simv +vcs+vcdpluson
+## 🏗️ Module Information
 
-Using Mentor Questa/ModelSim
-1. Compile:
-   vlog +acc axi_transaction_order.sv
-2. Run:
-   vsim -c -do "run -all; quit" work.axi_transaction_order
+| Property | Description |
+|---|---|
+| Module name | `axi_transaction_order` |
+| Data structure | Associative array |
+| Key type | `int` |
+| Value type | `logic [15:0]` |
+| Example keys | `101`, `105`, `106`, `109` |
+| Application | AXI transaction tracking and scoreboard development |
 
-Expected console output (example)
-- The exact ordering of foreach may vary by simulation, but associative-array navigation functions return deterministic first/last/next/prev based on key ordering.
+## 🔧 Associative Array Declaration
 
-Sample output (representative):
+```systemverilog
+logic [15:0] tr_id[int];
+```
 
+**Explanation:**
+
+- `logic [15:0]` represents the value stored for each entry.
+- `int` represents the key type.
+- `tr_id` is the associative array name.
+- Entries are indexed using integer keys rather than fixed array positions.
+
+For example:
+
+```systemverilog
+tr_id[101] = 16'h00AA;
+tr_id[105] = 16'h00BB;
+tr_id[109] = 16'h00CC;
+```
+
+Each transaction ID maps to its associated data.
+
+## 📚 Associative Array Methods
+
+| Method | Purpose |
+|---|---|
+| `num()` | Returns the number of entries in the array. |
+| `foreach` | Iterates through existing entries. |
+| `first(index)` | Finds the first key in traversal order. |
+| `last(index)` | Finds the last key in traversal order. |
+| `next(index)` | Finds the next key after the supplied index. |
+| `prev(index)` | Finds the previous key before the supplied index. |
+| `exists(index)` | Checks whether a key exists. |
+| `delete(index)` | Deletes the entry at the specified key. |
+
+**Note:** `first()`, `last()`, `next()`, and `prev()` use an index variable passed by reference. Check their return values to determine whether a matching key was found.
+
+## 🔄 Example Workflow
+
+1. Declare the associative array.
+2. Insert transaction entries using AXI IDs as keys.
+3. Display the initial and updated entry counts.
+4. Iterate through existing transactions using `foreach`.
+5. Find the first and last transaction IDs.
+6. Navigate to the next and previous keys.
+7. Check whether selected transaction IDs exist.
+8. Delete one transaction entry.
+9. Display the remaining transactions.
+
+## 🖥️ Representative Console Output
+
+```text
 INITIAL_TRANSACTION = 0
 AFTER_TRANSACTION = 4
+
 FOR_TRANSACTION[101] = aa
 FOR_TRANSACTION[105] = bb
 FOR_TRANSACTION[106] = dd
 FOR_TRANSACTION[109] = cc
+
 FIRST_ID = 101 TRANS_TY = aa
 LAST_ID = 109 TRANS_TY = cc
 NEXT_ID = 109 TRANS_TY = cc
 PREV_ID = 105 TRANS_TY = bb
+
 READ Transaction Not Found
 BURST_WRITE Transaction Found
 WRITE Transaction Found
@@ -63,10 +102,83 @@ Remaining Transactions After Deletion
 TRANSACTION[101] = aa
 TRANSACTION[106] = dd
 TRANSACTION[109] = cc
+```
 
-Notes
-- The example code is intended for educational/demo purposes.
-- Rename the file or integrate into a testbench as needed.
+*The output is representative of the supplied example. Exact messages and values depend on the implementation and the indices selected for navigation.*
 
-License
-- Add a license file to the repo if you want to clarify reuse permissions.
+## ⚙️ How to Run
+
+### Synopsys VCS
+
+Compile:
+
+```bash
+vcs -sverilog axi_transaction_order.sv -o simv
+```
+
+Run:
+
+```bash
+./simv
+```
+
+### Questa / ModelSim
+
+Compile:
+
+```tcl
+vlog axi_transaction_order.sv
+```
+
+Run:
+
+```tcl
+vsim -c work.axi_transaction_order -do "run -all; quit"
+```
+
+Use a SystemVerilog-compatible simulator and ensure that the source file contains a valid testbench or a module with an `initial` block that executes the example.
+
+## 💡 Application in AXI Verification
+
+In an AXI verification environment, an associative array can be used to maintain records of outstanding transactions.
+
+For example, a verification scoreboard can:
+
+- Store an expected response against a transaction ID.
+- Search for a transaction when a response arrives.
+- Compare returned data against expected data.
+- Remove the entry after the transaction completes.
+- Detect unexpected or duplicate transaction IDs.
+
+**Important:** This is an educational transaction-tracking example, not a complete AXI protocol checker. Real AXI verification must also account for outstanding transaction limits, response ordering rules, and the relevant AXI channel handshakes.
+
+## 🎤 Interview Questions
+
+1. What is an associative array in SystemVerilog?
+2. How does an associative array differ from a fixed-size array?
+3. Why are associative arrays useful in scoreboards?
+4. What is the difference between `num()` and `size()`?
+5. How does `exists()` help prevent invalid lookups?
+6. What is the purpose of `first()` and `last()`?
+7. How do `next()` and `prev()` navigate keys?
+8. What is the difference between `delete()` and assigning a default value?
+9. How could an associative array track outstanding AXI transactions?
+10. What happens if the same key is inserted twice?
+
+## 📂 Repository Structure
+
+```text
+axi-transaction-tracker/
+├── README.md
+└── axi_transaction_order.sv
+```
+
+## 📄 License
+
+Add a `LICENSE` file if you want to specify the terms under which others may reuse or modify this project.
+
+## 👨‍💻 Learning Outcome
+
+After completing this example, you should be able to declare, populate, search, navigate, iterate, and delete associative-array entries in SystemVerilog and explain how they can be applied in AXI verification.
+
+**Topics:** SystemVerilog · Associative Arrays · AXI Verification · Scoreboards · Design Verification
