@@ -1,38 +1,50 @@
 # Lakshman VLSI – SystemVerilog Examples
 
-This repository is organized into focused example folders for common verification topics in SystemVerilog.
+This repository contains organized examples for common SystemVerilog concepts used in verification and design.
 
-## Repository structure
+## Structure
 
 ```text
-lakshman_vlsi/
-├── README.md
-├── systemverilog/
-│   ├── associative_array/
+systemverilog/
+├── associative_array/
+│   ├── README.md
+│   └── axi_transaction_order.sv
+├── queue/
+│   ├── README.md
+│   └── axi_write_buffer_queue.sv
+├── associative_queue/
+│   ├── README.md
+│   └── associative_queue_array.sv
+├── oop/
+│   ├── README.md
+│   └── shallow_deep_copy.sv
+├── casting/
+│   ├── static_casting/
 │   │   ├── README.md
-│   │   └── axi_transaction_order.sv
-│   ├── queue/
+│   │   └── static_casting_example.sv
+│   ├── dynamic_casting/
 │   │   ├── README.md
-│   │   └── axi_write_buffer_queue.sv
-│   └── oop/
+│   │   └── downcasting_example.sv
+│   ├── enum_casting/
+│   │   ├── README.md
+│   │   └── enum_casting.sv
+│   └── upcasting_downcasting/
 │       ├── README.md
-│       └── shallow_deep_copy.sv
-└── legacy_files/
-    └── original_docs_and_examples
+│       └── upcasting_downcasting_example.sv
 ```
 
 ## Topics covered
 
-- Associative arrays for AXI transaction tracking
-- Queues for write-buffer and FIFO modeling
-- OOP concepts in SystemVerilog: shallow copy, deep copy, and handle assignment
+- Associative arrays for sparse transaction tracking
+- Queue usage for write buffers and FIFO behavior
+- Associative queue patterns
+- Shallow/deep copy and handle assignment
+- Static casting, dynamic casting, enum casting, and up/down casting
 
 ## Quick links
 
-- [Associative Array Examples](systemverilog/associative_array/README.md)
-- [Queue Examples](systemverilog/queue/README.md)
-- [OOP Examples](systemverilog/oop/README.md)
-
-## Notes
-
-The original files remain available in the repository for reference, while the organized structure above provides a cleaner and more maintainable layout.
+- [Associative Array](systemverilog/associative_array/README.md)
+- [Queue](systemverilog/queue/README.md)
+- [Associative Queue](systemverilog/associative_queue/README.md)
+- [OOP](systemverilog/oop/README.md)
+- [Casting](systemverilog/casting/static_casting/README.md)
