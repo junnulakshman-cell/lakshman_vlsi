@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Weather Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <div class="brand-wrap">
+          <div class="brand-icon">☀️</div>
+          <div>
+            <p class="eyebrow">Forecast</p>
+            <h1>Weather Dashboard</h1>
+          </div>
+        </div>
+
+        <form id="search-form" class="search-form" autocomplete="off">
+          <label class="sr-only" for="city-input">Search city</label>
+          <input
+            id="city-input"
+            name="city"
+            type="text"
+            value="Hyderabad"
+            placeholder="Search city"
+          />
+          <button type="submit">Search</button>
+        </form>
+      </header>
+
+      <main>
+        <section class="hero card">
+          <div>
+            <p id="location-label" class="location-label">Loading location...</p>
+            <h2 id="current-temp">--°C</h2>
+            <p id="condition-text" class="condition-text">Fetching weather...</p>
+          </div>
+          <div id="condition-icon" class="condition-icon" aria-label="Weather icon">☀️</div>
+        </section>
+
+        <section class="stats-grid">
+          <article class="stat card">
+            <span class="label">Feels like</span>
+            <strong id="feels-like">--°C</strong>
+          </article>
+          <article class="stat card">
+            <span class="label">Humidity</span>
+            <strong id="humidity">--%</strong>
+          </article>
+          <article class="stat card">
+            <span class="label">Wind</span>
+            <strong id="wind">-- km/h</strong>
+          </article>
+          <article class="stat card">
+            <span class="label">Updated</span>
+            <strong id="updated-time">--:--</strong>
+          </article>
+        </section>
+
+        <section class="forecast-section">
+          <div class="section-header">
+            <h3>Hourly outlook</h3>
+          </div>
+          <div id="hourly-forecast" class="hourly-forecast"></div>
+        </section>
+
+        <section class="forecast-section">
+          <div class="section-header">
+            <h3>5-day forecast</h3>
+          </div>
+          <div id="daily-forecast" class="daily-forecast"></div>
+        </section>
+      </main>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
