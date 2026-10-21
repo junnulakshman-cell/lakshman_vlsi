@@ -21,6 +21,8 @@ The example shows how a parent-class handle can dynamically point to child-class
 - Dynamic binding
 - Polymorphism
 - Upcasting using `$cast`
+- `this` keyword usage
+- `super` keyword usage
 
 ---
 
@@ -237,6 +239,225 @@ With the `virtual` keyword:
 
 ---
 
+## `this` keyword in SystemVerilog
+
+### What is `this`?
+
+`this` is a built-in handle that points to the current instance of the class. It is used inside a class to refer to the object that is currently executing the method or constructor.
+
+In other words, when you write `this`, you mean:
+
+- "the current object"
+- "the instance of the class I am inside right now"
+
+### Where is `this` used?
+
+`this` is typically used inside:
+
+- constructors (`new`)
+- member functions
+- overridden methods
+- class methods when there is variable name conflict
+
+### Why is `this` used?
+
+It is mainly used to remove ambiguity when:
+
+- a local variable or input argument has the same name as a class member
+- you explicitly want to refer to the current object instead of a local variable
+
+### When to use `this`
+
+Use `this` when you want to access the current class instance clearly, especially in these situations:
+
+1. Parameter passing to constructor
+2. Assigning arguments to class members
+3. Calling methods on the current object
+4. Avoiding confusion between local variables and class properties
+
+### Example 1: Distinguishing member variable and argument
+
+```systemverilog
+class Base_Transactions;
+  bit [15:0] data;
+
+  function new(bit [15:0] data);
+    this.data = data;   // assigns argument to the class member
+  endfunction
+endclass
+```
+
+Here:
+
+- `data` on the right side is the constructor argument
+- `this.data` is the class property
+- `this` makes the distinction explicit
+
+### Example 2: Accessing current object
+
+```systemverilog
+class Axi_write_transactions extends Base_Transactions;
+  function void print_txn();
+    $display("Current object data = %0d", this.data);
+  endfunction
+endclass
+```
+
+This helps you clearly refer to the current transaction instance.
+
+### Key idea
+
+`this` is usually used to represent the current object. It does not refer to the parent class; it refers to the object that is currently active.
+
+---
+
+## `super` keyword in SystemVerilog
+
+### What is `super`?
+
+`super` is a special keyword that refers to the parent class (base class) of the current class (derived class).
+
+It is used to access:
+
+- base class members
+- base class methods
+- base class constructors
+- functionality inherited from the parent class
+
+### Where is `super` used?
+
+`super` is used inside:
+
+- derived class constructors
+- derived class methods
+- overridden methods
+- inherited method chaining
+
+### Why is `super` used?
+
+It is used to:
+
+1. initialize base class members
+2. reuse common logic from the parent class
+3. call the parent implementation of a method before or after adding child-specific logic
+4. maintain clean and structured inheritance behavior
+
+### When to use `super`
+
+Use `super` in these scenarios:
+
+1. When you need to call the base class constructor using `super.new()`
+2. When you want to call the parent version of a virtual method
+3. When you want to reuse inherited initialization logic
+4. When you need to combine parent behavior and child-specific behavior
+
+### Example 1: Calling base constructor
+
+```systemverilog
+class Base_Transactions;
+  bit [31:0] addr;
+
+  function new(bit [31:0] addr);
+    this.addr = addr;
+  endfunction
+endclass
+
+class Axi_write_transactions extends Base_Transactions;
+  bit [15:0] w_data;
+
+  function new(bit [31:0] addr, bit [15:0] w_data);
+    super.new(addr);      // calls Base_Transactions::new()
+    this.w_data = w_data;
+  endfunction
+endclass
+```
+
+Here:
+
+- `super.new(addr)` initializes the base class data
+- `this.w_data` initializes write-specific data
+
+This ensures the parent object is initialized correctly before child logic runs.
+
+### Example 2: Calling parent method before child logic
+
+```systemverilog
+class Base_Transactions;
+  virtual function void axi_txn();
+    $display("Base transaction common info");
+  endfunction
+endclass
+
+class Axi_write_transactions extends Base_Transactions;
+  virtual function void axi_txn();
+    super.axi_txn();      // call parent functionality
+    $display("Write transaction specific info");
+  endfunction
+endclass
+```
+
+This pattern is useful when you want to:
+
+- keep the base functionality
+- then add derived functionality
+
+### Important concept
+
+`super` does not mean "the current object". It means "the parent class part of the current object." It is used when the derived class wants to access or extend the parent behavior.
+
+---
+
+## `this` vs `super`
+
+| Keyword | Meaning | Refers to |
+|---------|---------|-----------|
+| `this` | current instance | the object currently running the method |
+| `super` | parent instance | the base class part of the current object |
+
+### Simple comparison
+
+```systemverilog
+class Base_Transactions;
+  bit [31:0] addr;
+
+  function new(bit [31:0] addr);
+    this.addr = addr;
+  endfunction
+endclass
+
+class Axi_write_transactions extends Base_Transactions;
+  bit [15:0] data;
+
+  function new(bit [31:0] addr, bit [15:0] data);
+    super.new(addr);    // parent initialization
+    this.data = data;   // current object initialization
+  endfunction
+endclass
+```
+
+- `this.data` refers to the derived class member
+- `super.new(addr)` calls the base class constructor
+
+---
+
+## Why these keywords matter in OOP and verification
+
+In SystemVerilog OOP and UVM, these keywords are essential because:
+
+- `this` helps identify the object currently running logic
+- `super` allows reuse of base-class behavior and constructor chaining
+- together they support clean inheritance, modular design, and scalable verification infrastructure
+
+This is especially useful in:
+
+- transaction classes
+- sequence items
+- drivers and monitors
+- scoreboard logic
+- reusable UVM components
+
+---
+
 ## Key learning points
 
 ### Inheritance
@@ -271,6 +492,23 @@ $cast(tr_b, tr_r);
 ```
 
 Converts child-class handles to base-class handles safely.
+
+### `this` keyword
+
+```systemverilog
+this.data = data;
+```
+
+Refers to the current object instance and helps avoid naming conflicts.
+
+### `super` keyword
+
+```systemverilog
+super.new(addr);
+super.axi_txn();
+```
+
+Calls base-class constructor or parent method to reuse inherited behavior.
 
 ---
 
@@ -317,6 +555,7 @@ After completing this example, you will understand:
 - Upcasting with `$cast`
 - Runtime polymorphism
 - AXI transaction modeling using OOP
+- Use of `this` and `super` in inheritance-based designs
 
 ---
 
