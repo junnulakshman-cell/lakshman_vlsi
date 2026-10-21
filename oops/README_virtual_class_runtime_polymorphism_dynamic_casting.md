@@ -1,53 +1,162 @@
-# SystemVerilog OOP: Virtual Class, Runtime Polymorphism, and Dynamic Casting
+# SystemVerilog OOP: Abstraction, Inheritance, Runtime Polymorphism, and Dynamic Casting
 
 ## Overview
 
-This project demonstrates the core concepts of object-oriented programming in SystemVerilog using a virtual parent class, a child class, and a parent handle that points to a child object.
-
-The example covers:
+This project demonstrates the following Object-Oriented Programming (OOP) concepts in SystemVerilog:
 
 - Abstraction
 - Inheritance
-- Encapsulation
-- Virtual classes
-- Pure virtual methods
-- Runtime polymorphism
+- Runtime Polymorphism
+- Dynamic Casting (`$cast`)
+- Virtual Classes
+- Pure Virtual Methods
+
+A virtual parent class defines a pure virtual method named `display()`. The child class implements the method and controls a retry mechanism based on a status flag.
+
+A parent class handle is used to access a child object, demonstrating runtime polymorphism.
+
+---
+
+# Problem Statement
+
+Design a SystemVerilog program that demonstrates:
+
+- A virtual base class with a pure virtual method
+- A derived class implementing the pure virtual method
+- Retry logic based on status information
+- Runtime polymorphism using a parent class handle
 - Dynamic casting using `$cast()`
 
-The parent class defines a pure virtual `display()` method, and the child class provides the implementation. The `status` variable controls whether retry logic is enabled or disabled.
+The retry count should:
 
-## File added
+- Be enabled when `status = 1`
+- Be disabled when `status = 0`
 
-- `virtual_class_runtime_polymorphism_dynamic_casting.sv` — commented SystemVerilog source code
+---
 
-## Class structure
+# Source Code
 
-```text
-          +------------------+
-          |      parent      |
-          +------------------+
-          | protected status |
-          +------------------+
-          | display()        |
-          +------------------+
-                    ^
-                    |
-                    |
-          +------------------+
-          |      child       |
-          +------------------+
-          | local retry_count|
-          +------------------+
-          | set_status()     |
-          | display()       |
-          +------------------+
+```systemverilog
+virtual class parent;
+
+  protected int status;
+
+  pure virtual function void display();
+
+endclass
+
+class child extends parent;
+
+  local int retry_count;
+
+  function new();
+    super.new();
+  endfunction
+
+  function void set_status(int status);
+    this.status = status;
+    $display("Status = %0b", status);
+  endfunction
+
+  function void display();
+    if(status == 1)
+      retry_count = 1'b1;
+    else
+      retry_count = 1'b0;
+
+    if(retry_count == 1)
+      $display("COUNT IS RESTARTED\nStatus = %0b Count = %0b",
+               retry_count, status);
+    else
+      $display("COUNT IS NOT RESTARTED\nStatus = %0b Count = %0b",
+               retry_count, status);
+  endfunction
+
+endclass
+
+module tb;
+
+  parent p;
+  child c;
+
+  initial begin
+    c = new();
+    p = c;
+
+    c.set_status(1);
+    p.display();
+
+    c.set_status(0);
+    p.display();
+
+    c.set_status(1);
+    p.display();
+
+    if($cast(p, c))
+      $display("Casting is success");
+    else
+      $display("Casting is failed");
+  end
+
+endmodule
 ```
 
-## Key concepts
+---
 
-### 1. Virtual class
+# Class Hierarchy
 
-A virtual class is an abstract class that cannot be instantiated directly. It acts as a template for the derived class.
+```text
+                 +----------------+
+                 |    parent      |
+                 +----------------+
+                 | # status       |
+                 +----------------+
+                 | display()      |
+                 +----------------+
+                         ▲
+                         │
+                         │ extends
+                         │
+                 +----------------+
+                 |     child      |
+                 +----------------+
+                 | retry_count    |
+                 +----------------+
+                 | set_status()   |
+                 | display()      |
+                 +----------------+
+```
+
+Legend:
+
+```text
+# = protected
+```
+
+---
+
+# OOP Concepts Demonstrated
+
+## 1. Abstraction
+
+Abstraction is the process of hiding implementation details and exposing only the required functionality.
+
+This is implemented using:
+
+```systemverilog
+virtual class parent;
+pure virtual function void display();
+```
+
+The parent class specifies what should be done, but not how it should be done.
+
+---
+
+## 2. Virtual Class
+
+A virtual class cannot be instantiated directly.
+
+Example:
 
 ```systemverilog
 virtual class parent;
@@ -56,105 +165,130 @@ virtual class parent;
 endclass
 ```
 
-### 2. Pure virtual method
+This class acts like a template for all derived classes.
 
-A pure virtual function has no implementation and must be implemented by every child class.
+---
+
+## 3. Pure Virtual Function
+
+A pure virtual function is declared without implementation:
 
 ```systemverilog
 pure virtual function void display();
 ```
 
-### 3. Inheritance
+The child class must provide a definition.
 
-The child inherits the protected variable `status` from the parent.
+---
+
+## 4. Inheritance
+
+Inheritance allows a child class to acquire features from the parent class:
 
 ```systemverilog
 class child extends parent;
 ```
 
-### 4. Runtime polymorphism
+The child inherits the `status` variable.
 
-A parent handle can point to a child object. When `p.display()` is called, the child implementation executes.
+---
+
+## 5. Encapsulation
+
+Encapsulation hides internal data and provides controlled access through methods.
+
+This example uses:
+
+```systemverilog
+protected int status;
+local int retry_count;
+```
+
+`status` is visible to the child class but hidden from the testbench.
+`retry_count` is hidden inside the child class.
+
+---
+
+# Runtime Polymorphism
+
+Runtime polymorphism occurs when a parent handle points to a child object and invokes an overridden method.
+
+Example:
 
 ```systemverilog
 parent p;
-child  c;
+child c;
 
 c = new();
 p = c;
 p.display();
 ```
 
-### 5. Dynamic casting
+Even though `p` is a parent handle, the child implementation of `display()` runs.
 
-`$cast()` safely converts a child handle to a parent handle. Since a child is also a parent, the cast succeeds.
+---
+
+# Dynamic Casting
+
+`$cast()` performs safe runtime type conversion.
 
 ```systemverilog
-if ($cast(p, c))
+if($cast(p, c))
   $display("Casting is success");
 ```
 
-## Program behavior
+This is an upcast from child to parent, and it succeeds because every child is also a parent.
 
-- If `status == 1`, retry count becomes `1` and the message prints:
+---
 
-```text
-COUNT IS RESTARTED
-Status = 1 Count = 1
-```
-
-- If `status == 0`, retry count becomes `0` and the message prints:
-
-```text
-COUNT IS NOT RESTARTED
-Status = 0 Count = 0
-```
-
-## Expected output
+# Expected Output
 
 ```text
 Status = 1
 COUNT IS RESTARTED
 Status = 1 Count = 1
+
 Status = 0
 COUNT IS NOT RESTARTED
 Status = 0 Count = 0
+
 Status = 1
 COUNT IS RESTARTED
 Status = 1 Count = 1
+
 Casting is success
 ```
 
-## Why this example matters
+---
 
-This design shows how object-oriented programming in SystemVerilog supports abstraction and reuse. A base class defines a common contract, the child class implements it, and the base handle allows polymorphic behavior without knowing the exact object type at compile time.
+# Interview Questions
 
-## How to run
+## Q1. Why is the parent class declared virtual?
 
-Use any SystemVerilog simulator such as Questa, VCS, or Xcelium.
+Because it is an abstract class and cannot be instantiated directly.
 
-1. Create a new project or compile the source file.
-2. Add `virtual_class_runtime_polymorphism_dynamic_casting.sv`.
-3. Run the simulation.
-4. Compare the transcript output with the expected output shown above.
+## Q2. What is a pure virtual method?
 
-## Interview notes
+A method declared without implementation and required in all derived classes.
 
-1. Why is the parent class virtual?
-   - Because it is an abstract class and cannot be instantiated directly.
+## Q3. What is runtime polymorphism?
 
-2. What is a pure virtual method?
-   - A method declared without implementation and forced to be implemented by derived classes.
+A parent handle invoking the child implementation of an overridden method at runtime.
 
-3. What is runtime polymorphism?
-   - A parent handle invoking an overridden child method at runtime.
+## Q4. What is the purpose of `$cast()`?
 
-4. Why is `$cast()` used?
-   - To perform a safe type conversion between class handles.
+It performs safe runtime type conversion between class handles.
 
-5. What concept is shown by `p = c`?
-   - A parent handle pointing to a child object.
+## Q5. What OOP concepts are demonstrated?
 
-## Conclusion
+- Abstraction
+- Encapsulation
+- Inheritance
+- Runtime Polymorphism
+- Dynamic Casting
 
-This example demonstrates a clean and practical SystemVerilog OOP workflow using abstraction, inheritance, encapsulation, runtime polymorphism, and dynamic casting. It is a useful reference for interview preparation, class design, and verification modeling tasks.
+---
+
+# Conclusion
+
+This project demonstrates a complete SystemVerilog OOP workflow using a virtual class, pure virtual function, inheritance, encapsulation, runtime polymorphism, and dynamic casting. A parent handle references a child object and executes the child implementation of `display()` at runtime, while the retry mechanism is controlled by the inherited status variable.
