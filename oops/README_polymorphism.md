@@ -23,6 +23,7 @@ The example shows how a parent-class handle can dynamically point to child-class
 - Upcasting using `$cast`
 - `this` keyword usage
 - `super` keyword usage
+- `extends` keyword usage
 
 ---
 
@@ -239,6 +240,76 @@ With the `virtual` keyword:
 
 ---
 
+## `extends` keyword in SystemVerilog
+
+### What is `extends`?
+
+`extends` is the keyword used to create a derived class from a base class.
+
+It means:
+
+- the child class inherits all the properties and methods of the parent class
+- the child class can add new members or override existing methods
+- the child class can be treated as a specialized version of the parent
+
+### Where is `extends` used?
+
+`extends` is used when declaring a class hierarchy:
+
+```systemverilog
+class Axi_write_transactions extends Base_Transactions;
+endclass
+```
+
+This means `Axi_write_transactions` is a child of `Base_Transactions`.
+
+### Why is `extends` used?
+
+It is used to:
+
+1. reuse common transaction logic
+2. create specialized behavior for different transaction types
+3. model inheritance in OOP
+4. support polymorphism through a common base handle
+
+### When to use `extends`
+
+Use `extends` when:
+
+- multiple classes share common signals and methods
+- you want to model a generic concept and then different specialized versions
+- you want to reuse code without duplicating it
+- you want to build a class hierarchy for verification infrastructure like UVM objects and components
+
+### Example: base + child transaction
+
+```systemverilog
+class Base_Transactions;
+  bit [31:0] addr;
+  bit [2:0]  id;
+
+  virtual function void axi_txn();
+    $display("Base transaction");
+  endfunction
+endclass
+
+class Axi_write_transactions extends Base_Transactions;
+  bit [15:0] w_data;
+
+  virtual function void axi_txn();
+    $display("Write transaction: addr=%0d, id=%0d, data=%0d", addr, id, w_data);
+  endfunction
+endclass
+```
+
+Here, the write transaction inherits base properties such as `addr` and `id`, and adds its own property `w_data`.
+
+### Important point
+
+`extends` enables inheritance, but for polymorphism to work properly, the base method must usually be declared as `virtual` and the child method should override it.
+
+---
+
 ## `this` keyword in SystemVerilog
 
 ### What is `this`?
@@ -444,6 +515,7 @@ endclass
 
 In SystemVerilog OOP and UVM, these keywords are essential because:
 
+- `extends` creates a reusable inheritance structure
 - `this` helps identify the object currently running logic
 - `super` allows reuse of base-class behavior and constructor chaining
 - together they support clean inheritance, modular design, and scalable verification infrastructure
@@ -492,6 +564,14 @@ $cast(tr_b, tr_r);
 ```
 
 Converts child-class handles to base-class handles safely.
+
+### `extends` keyword
+
+```systemverilog
+class Axi_write_transactions extends Base_Transactions;
+```
+
+Creates the inheritance relationship between parent and child classes.
 
 ### `this` keyword
 
@@ -555,7 +635,7 @@ After completing this example, you will understand:
 - Upcasting with `$cast`
 - Runtime polymorphism
 - AXI transaction modeling using OOP
-- Use of `this` and `super` in inheritance-based designs
+- Use of `extends`, `this`, and `super` in inheritance-based designs
 
 ---
 
