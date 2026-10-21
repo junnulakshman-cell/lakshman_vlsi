@@ -2,9 +2,13 @@
 
 ## Overview
 
-This project demonstrates **Object-Oriented Programming (OOP)** concepts in SystemVerilog using AXI transaction classes. The example shows how a **base class handle** can reference different derived class objects through `$cast()`.
+This project demonstrates **Object-Oriented Programming (OOP)** concepts in SystemVerilog using AXI transaction classes. The example shows how a **base class handle** can reference different derived classes and how method dispatch changes depending on whether the function is virtual.
 
-Although the derived classes override the `axi_txn()` method, the method in the base class is **not declared as virtual**. Therefore, SystemVerilog performs **static binding**, and the base class implementation is executed.
+The folder named `oops/` is dedicated to learning **object-oriented verification concepts** in SystemVerilog. It focuses on how classes, inheritance, overriding, and polymorphism are used in real verification environments such as UVM.
+
+In this design, different AXI transaction types share a common base class, but each child class implements a specialized behavior. The key idea is to understand how the base handle calls the correct implementation during runtime and when it does not.
+
+Although the derived classes override the `axi_txn()` method, the method in the base class is **not declared as virtual**. Therefore, SystemVerilog performs **static binding**, and the base class implementation is selected.
 
 ---
 
@@ -16,6 +20,53 @@ Although the derived classes override the `axi_txn()` method, the method in the 
 - Observe Static Binding behavior
 - Compare Virtual and Non-Virtual Functions
 - Understand why Virtual Functions are required for Runtime Polymorphism
+- Learn how the `oops/` folder organizes OOP examples
+
+---
+
+## OOP Concepts Covered in This Folder
+
+This folder demonstrates the core concepts of OOP in SystemVerilog:
+
+### 1. Encapsulation
+The class groups related transaction data and methods together in one unit. For example, write and read transactions are represented as class objects containing their own fields and display logic.
+
+### 2. Inheritance
+A common base class, `Base_Transactions`, defines shared AXI fields such as `data`, `addr`, and `id`. The derived classes `Axi_write_transactions` and `Axi_read_transactions` extend this class and add specialized members like write/read addresses and responses.
+
+### 3. Method Overriding
+Both child classes define their own `axi_txn()` method. This allows the derived class to customize the way transaction data is displayed.
+
+### 4. Upcasting
+The child handle is assigned to a base class handle using `$cast()`. This is a very common pattern in object-oriented design and is used to generalize references to a common interface.
+
+### 5. Static Binding vs Dynamic Binding
+When the base method is non-virtual, the compiler chooses the method based on the handle type, not the actual object type. This is called **static binding**.
+
+When the method is declared as `virtual`, the method is resolved based on the actual object type at runtime. This is called **dynamic binding** and is the basis for true polymorphism.
+
+### 6. Runtime Polymorphism
+Polymorphism means that the same method name can behave differently based on the actual object being referenced. In this folder, runtime polymorphism is shown by using a base handle to point to different derived objects and by changing the method to `virtual`.
+
+### 7. Abstraction
+The base class hides the internal differences between write and read transactions while exposing a common interface (`axi_txn()`). This allows the testbench to interact with transaction objects using a common abstraction.
+
+---
+
+## Folder Overview: `oops/`
+
+The `oops/` folder is intended to teach and practice OOP concepts in SystemVerilog using real verification-style examples. Its purpose is to help learners understand how object-oriented modeling is applied in protocol classes, transaction classes, and reusable testbench components.
+
+This folder contains examples that highlight:
+
+- object creation and initialization
+- inheritance and specialization
+- overriding methods
+- base-to-derived handle relationships
+- runtime behavior of `virtual` methods
+- how OOP concepts map to UVM design patterns
+
+The design is intentionally simple so that the behavior is easy to understand before moving to larger verification environments like UVM.
 
 ---
 
@@ -396,6 +447,8 @@ depending on the actual object assigned.
 
 ✅ This behavior is frequently asked in SystemVerilog and UVM interviews.
 
+✅ The `oops/` folder is a practical learning space for applying OOP principles in verification and design.
+
 ---
 
 ## Interview Question
@@ -423,11 +476,13 @@ Without `virtual`, SystemVerilog uses **static binding**, resolving the method b
 ## Repository Structure
 
 ```text
-polymorphismsa/
-│
+oops/
+├── README.md
 ├── polymorphismsa.sv
-└── README.md
+└── related OOP example files
 ```
+
+This folder focuses on OOP and polymorphism concepts in SystemVerilog. It is a clean example of how a base class and derived transaction classes can model different AXI behaviors while still sharing a common interface.
 
 ---
 
