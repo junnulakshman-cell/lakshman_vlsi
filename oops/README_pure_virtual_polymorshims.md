@@ -242,6 +242,161 @@ In real verification environments, many objects share a common interface but beh
 
 ---
 
+## Additional AXI Transaction Polymorphism summary
+
+This project demonstrates Runtime Polymorphism in SystemVerilog using:
+
+- Virtual Class (Abstract Class)
+- Pure Virtual Function
+- Inheritance
+- Method Overriding
+- Dynamic Binding
+- `$cast()`-based upcasting
+
+### Class Hierarchy
+
+```text
+              Base_Transactions
+               (Virtual Class)
+                      |
+        -----------------------------
+        |                           |
+        |                           |
+Axi_write_transactions   Axi_read_transactions
+```
+
+### Signals
+
+#### Base_Transactions
+
+| Signal | Width | Description |
+|---------|---------|-------------|
+| data | 16-bit | Transaction Data |
+| addr | 32-bit | Address |
+| id | 3-bit | Transaction ID |
+| burst_len | 3-bit | Burst Length |
+| burst_size | 3-bit | Burst Size |
+
+#### AXI Write Transaction
+
+| Signal | Width |
+|---------|---------|
+| w_data | 16-bit |
+| aw_addr | 32-bit |
+| b_resp | 2-bit |
+
+#### AXI Read Transaction
+
+| Signal | Width |
+|---------|---------|
+| r_data | 16-bit |
+| ar_addr | 32-bit |
+| r_resp | 2-bit |
+
+### Abstract Base Class
+
+```systemverilog
+virtual class Base_Transactions;
+
+  pure virtual function void axi_txn();
+
+endclass
+```
+
+- Cannot be instantiated.
+- Defines a common interface for all transaction types.
+- Forces derived classes to implement `axi_txn()`.
+
+### Polymorphism Example
+
+```systemverilog
+$cast(tr_b, tr_w);
+tr_b.axi_txn();   // Calls Write Transaction Method
+
+$cast(tr_b, tr_r);
+tr_b.axi_txn();   // Calls Read Transaction Method
+```
+
+Runtime method selection depends on the object assigned to `tr_b`.
+
+### Simulation Output
+
+```text
+casting is success
+
+AXI-WRITE_TRANS->
+WRITE_DATA = 23
+WRITE_ADDR = 34
+ID = 3
+BURST_LEN = 2
+WRITE_RESP = 1
+
+casting is success
+
+READ_TRAN->
+READ_DATA = 24
+READ_ADDR = 33
+ID = 3
+BURST_LEN = 4
+READ_RESP = 1
+```
+
+### Virtual Class vs Normal Class
+
+| Feature | Normal Class | Virtual Class |
+|----------|-------------|-------------|
+| Object Creation | ✅ Yes | ❌ No |
+| Abstract Behavior | ❌ No | ✅ Yes |
+| Pure Virtual Functions | ❌ No | ✅ Yes |
+| Used as Base Template | ❌ No | ✅ Yes |
+
+### Virtual Function vs Pure Virtual Function
+
+| Feature | Virtual Function | Pure Virtual Function |
+|----------|-----------------|----------------------|
+| Has Implementation | ✅ Yes | ❌ No |
+| Function Body | ✅ Yes | ❌ No |
+| Override Required | ❌ No | ✅ Yes |
+| Makes Class Abstract | ❌ No | ✅ Yes |
+
+#### Virtual Function
+
+```systemverilog
+virtual function void axi_txn();
+  $display("Base Transaction");
+endfunction
+```
+
+#### Pure Virtual Function
+
+```systemverilog
+pure virtual function void axi_txn();
+```
+
+### Key Points
+
+✅ `virtual class` creates an abstract base class.
+
+✅ `pure virtual function` acts as a contract for child classes.
+
+✅ Derived classes must implement all pure virtual functions.
+
+✅ `$cast()` safely assigns child objects to a parent handle.
+
+✅ Runtime polymorphism enables one handle to access multiple transaction types.
+
+✅ This concept is widely used in UVM (`uvm_object`, `uvm_sequence_item`, `uvm_driver`, `uvm_monitor`).
+
+### Repository Structure
+
+```text
+polymorphismsa/
+├── polymorphismsa.sv
+└── README.md
+```
+
+---
+
 ## Related files
 
 - `oops/pure_virtual_polymorshims.sv` — complete SystemVerilog implementation
