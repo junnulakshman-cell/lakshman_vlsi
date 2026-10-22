@@ -1,23 +1,24 @@
 # Task Lifetime in SystemVerilog
 
-This topic explains the difference between a normal (static) task and an automatic task in SystemVerilog.
+This folder contains the complete set of examples and notes for understanding normal (static) tasks versus automatic tasks in SystemVerilog.
 
-## Core idea
+## Files in this folder
 
-- A normal task has static lifetime by default.
-- Its local variables are shared across invocations.
-- An automatic task creates a separate storage instance for each call.
-- This matters when multiple task calls run concurrently with `fork...join`.
+- `README.md` — overview and file index
+- `normal_vs_automatic_task.md` — detailed concept guide with syntax, examples, and explanations
+- `normal_task_examples.sv` — static task examples and concurrency demonstrations
+- `automatic_task_examples.sv` — automatic task examples and comparison code
 
-## Why it matters
+## Quick summary
 
-When two or more task calls execute at the same time, static tasks can interfere because they share the same local variables. Automatic tasks avoid this by giving each invocation independent local storage.
+- Normal task: local variables are static by default and shared across calls.
+- Automatic task: each call gets independent local storage.
+- Use `task automatic` when concurrent operations need independent state.
+- Use a normal task only when intentionally shared state is desired.
 
-## Example summary
+## Recommended reading order
 
-- `normal_task` shows shared local state across concurrent calls.
-- `automatic_task` shows independent local state per invocation.
-
-## Key rule
-
-Use `task automatic ...` when each call must keep its own temporary variables, counters, or transaction state. Use a normal task only when intentionally shared local state is required.
+1. Read `normal_vs_automatic_task.md`
+2. Run `normal_task_examples.sv`
+3. Run `automatic_task_examples.sv`
+4. Compare output behavior in `fork...join` simulations
