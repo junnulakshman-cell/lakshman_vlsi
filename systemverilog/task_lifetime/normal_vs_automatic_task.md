@@ -15,7 +15,7 @@ The main difference is how local variables behave when multiple task calls execu
 
 ### Definition
 
-A normal task is declared without the `automatic` keyword. Its local variables have static lifetime by default, meaning their storage persists between calls and is shared by concurrent invocations.
+A normal task is declared without the `automatic` keyword. Its local variables have static lifetime by default, meaning their storage persists between calls and is shared by concurrent invocations[...]
 
 ### Syntax
 
@@ -123,13 +123,13 @@ The order of the two lines may vary.
 
 | Feature | Normal Task | Automatic Task |
 |---|---|---|
-| Default local-variable lifetime | Static | Automatic |
-| Local storage across calls | Shared | Separate for each invocation |
-| Local values persist between calls | Yes | Each invocation gets its own storage |
-| Concurrent calls needing independent local state | Can interfere | Better suited |
-| Recursive calls | Not generally safe with shared local state | Supported |
-| Module-level variables | Shared | Shared |
-| Typical verification use | Intentionally persistent local state | Concurrent transactions and checks |
+| | Default local-variable lifetime | Static | Automatic |
+| | Local storage across calls | Shared | Separate for each invocation |
+| | Local values persist between calls | Yes | Each invocation gets its own storage |
+| | Concurrent calls needing independent local state | Can interfere | Better suited |
+| | Recursive calls | Not generally safe with shared local state | Supported |
+| | Module-level variables | Shared | Shared |
+| | Typical verification use | Intentionally persistent local state | Concurrent transactions and checks |
 
 ## 5. Real-Time VLSI Verification Applications
 
@@ -287,9 +287,7 @@ Both calls execute the same static task and share its local variables, `normal_c
 
 ### Important distinction
 
-A static task does not inherently produce nondeterministic output. If the execution order is fixed and the shared variables are accessed in a predictable sequence, the output can also be predictable.
-
-In this example, the task has no delays or explicit synchronization. Therefore, do not assume that each invocation completes all its statements before the other invocation starts. The simulator's scheduling determines how the concurrent calls progress.
+A static task does not inherently produce nondeterministic output. If the execution order is fixed and the shared variables are accessed in a predictable sequence, the output can also be predictable. In this example, the task has no delays or explicit synchronization. Therefore, do not assume that each invocation completes all its statements before the other invocation starts. The simulator's scheduling algorithm decides the interleaving.
 
 The supplied output is one observed execution, not a guaranteed output sequence for every simulator.
 
@@ -300,3 +298,151 @@ The supplied output is one observed execution, not a guaranteed output sequence 
 - Avoid having concurrent processes modify the same variables without coordination.
 
 Key takeaway: static lifetime means shared local storage; nondeterminism arises when concurrent access and modification make the result dependent on execution ordering.
+
+## 10. Practical Example: Normal Task vs Automatic Task
+
+### Objective
+
+This example demonstrates the difference between a normal task and an automatic task by calling each task twice concurrently using `fork...join`.
+
+### SystemVerilog Code
+
+```systemverilog
+module task_example;
+
+  task automatic auto_task();
+    int auto_data;
+    int auto_count;
+
+    $display("======Automatic_task=======");
+
+    for (auto_data = 0; auto_data < 5; auto_data++)
+      $display("auto_count = %0d auto_data = %0d",
+               auto_count, auto_data);
+
+    auto_data = 5;
+    auto_count = 5;
+
+    for (auto_count = 0; auto_count < 5; auto_count++)
+      $display("auto_count = %0d auto_data = %0d",
+               auto_count, auto_data);
+  endtask
+
+  task normal_task();
+    int normal_count;
+    int normal_data;
+
+    normal_count = 5;
+    $display("=======Normal_task========");
+
+    for (normal_count = 0; normal_count < 5; normal_count++)
+      $display("normal_count = %0d data = %0d",
+               normal_count, normal_data);
+
+    normal_data = 5;
+
+    for (normal_data = 0; normal_data < 5; normal_data++)
+      $display("normal_count = %0d data = %0d",
+               normal_count, normal_data);
+  endtask
+
+  initial begin
+    fork
+      auto_task();
+      auto_task();
+    join
+
+    fork
+      normal_task();
+      normal_task();
+    join
+
+    $finish;
+  end
+
+endmodule
+```
+
+### Simulation Output
+
+```text
+======Automatic_task=======
+auto_count = 0 auto_data = 0
+auto_count = 0 auto_data = 1
+auto_count = 0 auto_data = 2
+auto_count = 0 auto_data = 3
+auto_count = 0 auto_data = 4
+auto_count = 0 auto_data = 5
+auto_count = 1 auto_data = 5
+auto_count = 2 auto_data = 5
+auto_count = 3 auto_data = 5
+auto_count = 4 auto_data = 5
+
+======Automatic_task=======
+auto_count = 0 auto_data = 0
+auto_count = 0 auto_data = 1
+auto_count = 0 auto_data = 2
+auto_count = 0 auto_data = 3
+auto_count = 0 auto_data = 4
+auto_count = 0 auto_data = 5
+auto_count = 1 auto_data = 5
+auto_count = 2 auto_data = 5
+auto_count = 3 auto_data = 5
+auto_count = 4 auto_data = 5
+
+=======Normal_task========
+normal_count = 0 data = 0
+normal_count = 1 data = 0
+normal_count = 2 data = 0
+normal_count = 3 data = 0
+normal_count = 4 data = 0
+normal_count = 5 data = 0
+normal_count = 5 data = 1
+normal_count = 5 data = 2
+normal_count = 5 data = 3
+normal_count = 5 data = 4
+
+=======Normal_task========
+normal_count = 0 data = 5
+normal_count = 1 data = 5
+normal_count = 2 data = 5
+normal_count = 3 data = 5
+normal_count = 4 data = 5
+normal_count = 5 data = 0
+normal_count = 5 data = 1
+normal_count = 5 data = 2
+normal_count = 5 data = 3
+normal_count = 5 data = 4
+```
+
+*Note: Blank lines have been added for readability.*
+
+### Explanation
+
+**1. Automatic task**
+
+- `auto_task()` is declared with the `automatic` keyword.
+- Each invocation gets its own `auto_data` and `auto_count` variables.
+- Both concurrent calls operate on independent local storage.
+- Therefore, each invocation follows the same loop pattern.
+
+**2. Normal task**
+
+- `normal_task()` has static lifetime by default.
+- `normal_data` and `normal_count` are shared across concurrent invocations.
+- One call can modify these variables before the other call reads them.
+- This can cause different values to appear in the second call.
+
+**3. Why can the normal-task output differ?**
+
+The two normal-task invocations share local storage. The observed output depends on how the simulator schedules their statements. The exact output is not guaranteed for every simulator or code variation.
+
+### Key Learning
+
+| Automatic task | Normal task |
+|---|---|
+| Each invocation gets separate local storage | Local storage is shared between invocations |
+| Suitable for concurrent calls needing independent state | Can cause interference between concurrent calls |
+| Useful for transaction drivers and parallel checks | Useful when persistent local state is intentional |
+
+**Conclusion:** Prefer automatic tasks when concurrent verification operations need independent local variables. Remember that module-level variables remain shared regardless of task lifetime.
