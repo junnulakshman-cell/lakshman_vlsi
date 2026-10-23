@@ -33,3 +33,15 @@ module shared_bus_arbitration_tb;
   end
 
 endmodule
+
+// Expected output (one valid scheduling order):
+// [10] GENERATOR: creating transaction
+// [10] DRIVER_1 waiting for bus
+// [10] DRIVER_1 acquired bus
+// [20] DRIVER_1 released bus
+// [20] DRIVER_2 waiting for bus
+// [20] DRIVER_2 acquired bus
+// [35] DRIVER_2 released bus
+// [35] DRIVER_3 waiting for bus
+// [35] DRIVER_3 acquired bus
+// [55] DRIVER_3 released bus
