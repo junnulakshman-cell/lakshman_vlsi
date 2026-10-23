@@ -59,3 +59,18 @@ module fork_join_constructs_tb;
   end
 
 endmodule
+
+// Expected output:
+// [0] Example: fork...join
+// [30] READ: operation complete
+// [30] WAIT: operation complete
+// [30] WRITE: operation complete
+// [30] Parent resumes after fork...join
+//
+// [100] Example: fork...join_any
+// [110] READ: operation complete
+// [110] Parent resumes after first child finishes
+//
+// [200] Example: fork...join_none
+// [200] Parent continues immediately
+// [300] All child processes completed
