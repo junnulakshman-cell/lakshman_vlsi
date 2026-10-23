@@ -183,3 +183,35 @@ module inter_process_sychronization;
   end
 
 endmodule
+
+// Expected output (one valid schedule):
+// [0] STARTING INTER-PROCESS SYNCHRONIZATION EXAMPLE
+// [0] GENERATOR : Creating Transaction
+// [10] GENERATOR : Transaction Completed
+// [10] DRIVER1 : Waiting For Bus
+// [10] DRIVER1 : Acquired Bus
+// [20] DRIVER1 : Released Bus
+// [20] DRIVER2 : Waiting For Bus
+// [20] DRIVER2 : Acquired Bus
+// [35] DRIVER2 : Released Bus
+// [35] DRIVER3 : Waiting For Bus
+// [35] DRIVER3 : Acquired Bus
+// [55] DRIVER3 : Released Bus
+// [55] END OF SEMAPHORE-EVENT EXAMPLE
+// [0] Process 4 is completed
+// [0] Process 1 is completed
+// [0] Process 3 is completed
+// [0] Process 2 is completed
+// [30] SRAM PERFORM THE READ OPERTION
+// [30] SRAM STORE THE DATA FOR SOME TIME
+// [45] SRAM COMPLETED THE READ OPERTION
+// [45] SRAM RELEASED AFTER THE [45] NS
+// [30] SRAM WENT INTO THE WRITE OPERATION
+// [70] SRAM COMPLETED THE WRITE OPERTION
+// [70] Parent Released By join
+// [100] Parent Released By join_any
+// [200] Parent Released By join_any + disable fork
+// [300] Parent Released By join_none
+// [400] Parent Released By join_none + disable fork
+// [500] Parent Running
+// [500] All Tasks Completed
