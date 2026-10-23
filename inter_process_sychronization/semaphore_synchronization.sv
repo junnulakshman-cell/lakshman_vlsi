@@ -14,3 +14,8 @@ module semaphore_synchronization_tb;
   end
 
 endmodule
+
+// Expected output:
+// [0] Initial semaphore count = 1
+// [0] Critical section entered
+// [10] Critical section finished

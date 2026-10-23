@@ -36,3 +36,8 @@ module disable_fork_tb;
   end
 
 endmodule
+
+// Expected output:
+// [0] Starting timeout example
+// [10] READ complete
+// [10] Active child processes terminated by disable fork

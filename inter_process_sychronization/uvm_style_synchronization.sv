@@ -28,3 +28,9 @@ module uvm_style_synchronization_tb;
   end
 
 endmodule
+
+// Expected output:
+// [0] MONITOR: waiting for response
+// [20] DRIVER: sending response
+// [20] MONITOR: response received
+// [20] CLEANUP: ended monitor/timeout process

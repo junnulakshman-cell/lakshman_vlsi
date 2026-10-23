@@ -20,3 +20,8 @@ module event_synchronization_tb;
   end
 
 endmodule
+
+// Expected output:
+// [10] GENERATOR: Transaction is ready
+// [10] RECEIVER: Transaction ready event detected
+// [20] CHECK: event.triggered = 0
