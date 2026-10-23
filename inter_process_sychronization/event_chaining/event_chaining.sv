@@ -26,3 +26,9 @@ module event_chaining_tb;
   end
 
 endmodule
+
+// Expected output:
+// [0] Process 4 complete
+// [0] Process 1 complete
+// [0] Process 3 complete
+// [0] Process 2 complete
