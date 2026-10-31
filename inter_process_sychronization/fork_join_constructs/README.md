@@ -19,6 +19,57 @@ Fork/join is useful when:
 - a testbench wants to generate traffic while waiting for completion
 - a process must trigger several actions at once
 
+## Visual summary
+
+```mermaid
+flowchart TB
+    subgraph A["fork"]
+        direction TB
+        A1["task 1"]
+        A2["task 2"]
+        A3["task 3"]
+    end
+
+    subgraph B["join"]
+        direction TB
+        B1["join"]
+    end
+
+    subgraph C["join_any"]
+        direction TB
+        C1["join_any"]
+    end
+
+    subgraph D["join_none"]
+        direction TB
+        D1["join_none"]
+    end
+
+    A --> A1
+    A --> A2
+    A --> A3
+
+    A1 --> B1
+    A2 --> B1
+    A3 --> B1
+
+    A1 --> C1
+    A2 --> C1
+    A3 --> C1
+
+    A1 --> D1
+    A2 --> D1
+    A3 --> D1
+
+    D1 -. continue immediately .-> E["parent resumes"]
+```
+
+This diagram highlights the core behavior:
+
+- `fork ... join` waits for all child processes to finish before continuing.
+- `fork ... join_any` resumes when any one child finishes.
+- `fork ... join_none` allows the parent process to continue without waiting.
+
 ## Syntax overview
 
 ### `fork ... join`
