@@ -1,11 +1,10 @@
 # Lakshman VLSI – SystemVerilog Examples
 
-This repository contains organized examples for common SystemVerilog concepts used in verification and design.
+This repository contains a curated set of SystemVerilog examples and design notes focused on object-oriented programming, type casting, transactions, queues, and verification concepts used in digital design and VLSI workflows.
 
-## Structure
+## Repository structure
 
 ```text
-
 lakshman_vlsi/
 ├── README.md
 ├── README_ASSOCTIVE_ARRAY.me
@@ -17,7 +16,8 @@ lakshman_vlsi/
 ├── shallow_deep_copy.sv
 ├── dynamic_casting/
 │   ├── README.md
-│   └── downcasting_example.sv
+│   ├── downcasting_example.sv
+│   └── dynamic_casting_examples.sv
 ├── enum_casting/
 │   ├── README.md
 │   └── enum_casting.sv
@@ -83,33 +83,56 @@ lakshman_vlsi/
 │   ├── deep_shallow_copy_README.md
 │   ├── encapsulation_local_protected_access.sv
 │   ├── encapsulation_protected_local_access.sv
-│   ├── handle_assignment_diagram.svg
 │   ├── inheritance_basic.sv
 │   ├── method_overriding_constructor_chaining.sv
 │   ├── non_virtual_polymorphism_base_handle.sv
 │   ├── polymorphism/
 │   │   └── runtime_polymorphism_virtual/
-│   │       └── virtual_runtime_polymorphism.sv
+��   │       └── virtual_runtime_polymorphism.sv
 │   ├── polymorphism_without_virtual_function.md
 │   ├── pure_virtual_polymorshims.sv
 │   ├── shallow_deep_copy.sv
 │   └── virtual_class_runtime_polymorphism_dynamic_casting.sv
-└── weather-dashboard/
-    ├── README.md
-    ├── index.html
-    └── style.css
+├── weather-dashboard/
+│   ├── README.md
+│   ├── index.html
+│   └── style.css
+├── docs/
+│   ├── overview/
+│   │   ├── project_summary.md
+│   │   └── architecture_notes.md
+│   ├── examples/
+│   │   ├── associative_arrays.md
+│   │   ├── queue_design.md
+│   │   └── transaction_ordering.md
+│   └── references/
+│       └── systemverilog_guides.md
+├── .gitignore
+├── LICENSE
+├── CONTRIBUTING.md
+└── assets/
+    ├── images/
+    └── diagrams/
 ```
 
 ## Topics covered
 
-- Associative arrays for sparse transaction tracking
-- Queues and FIFO-style buffering
-- Associative queue patterns
-- Shallow/deep copy and handle assignment
-- Object-oriented programming (OOP) basics
-- Constructor inheritance
-- Polymorphism and dynamic behavior
+- Associative arrays and sparse data handling
+- Queues, FIFOs, and buffering patterns
+- Associative queue examples
+- Shallow and deep copy behavior in SystemVerilog classes
+- Object-oriented programming concepts
+- Inheritance, polymorphism, and virtual methods
 - Static casting, dynamic casting, enum casting, and up/down casting
+- Inter-process synchronization and transaction order modeling
+
+## Organization notes
+
+- Core SystemVerilog learning examples are grouped by concept.
+- The `systemverilog/` directory acts as the main learning structure.
+- The `oops/` directory contains deeper OOP-focused examples.
+- `weather-dashboard/` is kept separate as a front-end/app companion.
+- `docs/` is intended for high-level notes, examples, and reference material.
 
 ## Quick links
 
@@ -117,6 +140,7 @@ lakshman_vlsi/
 - [Queue](systemverilog/queue/README.md)
 - [Associative Queue](systemverilog/associative_queue/README.md)
 - [OOP](systemverilog/oop/README.md)
-- [OOP examples](oops/README.md)
-- [Shallow/Deep Copy](oops/deep_shallow_copy_README.md)
+- [OOP Examples](oops/README.md)
+- [Shallow / Deep Copy](oops/deep_shallow_copy_README.md)
 - [Casting](systemverilog/casting/static_casting/README.md)
+
