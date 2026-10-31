@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+  <defs>
+    <style>
+      .bg { fill: #dfe7ee; }
+      .title-bg { fill: #0d3b5c; }
+      .box { fill: #2a8ec9; stroke: #0a1d2a; stroke-width: 4; }
+      .index { fill: #b9bcc0; stroke: #0a1d2a; stroke-width: 4; }
+      .label { font: 700 40px 'Arial'; fill: #eaf3f8; }
+      .dark-label { font: 700 40px 'Arial'; fill: #0d3b5c; }
+      .small-label { font: 700 38px 'Arial'; fill: #0d3b5c; }
+      .big { font: 700 64px 'Arial'; fill: #ffffff; }
+      .big-dark { font: 700 62px 'Arial'; fill: #0d3b5c; }
+      .orange { fill: #eb8a2f; }
+      .orange-text { font: 700 46px 'Arial'; fill: #ffffff; }
+      .note-bg { fill: #f5f7f8; stroke: #2e3d45; stroke-width: 4; rx: 18; }
+      .code-bg { fill: #f0e1d1; stroke: #2e3d45; stroke-width: 4; }
+    </style>
+  </defs>
+
+  <rect class="bg" width="1600" height="900"/>
+
+  <!-- Title banner -->
+  <rect class="title-bg" x="20" y="20" width="1560" height="120" rx="28"/>
+  <text x="800" y="100" text-anchor="middle" class="big">Fixed Array</text>
+
+  <!-- Intro banner -->
+  <rect x="45" y="170" width="1510" height="90" rx="18" fill="#edf3f5" stroke="#2f4958" stroke-width="4"/>
+  <text x="800" y="225" text-anchor="middle" class="big-dark">A fixed array has a constant size determined at compile time.</text>
+
+  <!-- Array blocks -->
+  <g>
+    <rect class="index" x="70" y="330" width="180" height="120" rx="8"/>
+    <text x="160" y="402" text-anchor="middle" class="big-dark">Index</text>
+
+    <rect class="index" x="70" y="470" width="180" height="110" rx="8"/>
+    <text x="160" y="538" text-anchor="middle" class="big-dark">Data</text>
+
+    <rect class="box" x="268" y="330" width="210" height="250" rx="4"/>
+    <text x="373" y="468" text-anchor="middle" class="big">10</text>
+    <text x="373" y="368" text-anchor="middle" class="small-label">0</text>
+
+    <rect class="box" x="478" y="330" width="210" height="250" rx="4"/>
+    <text x="583" y="468" text-anchor="middle" class="big">20</text>
+    <text x="583" y="368" text-anchor="middle" class="small-label">1</text>
+
+    <rect class="box" x="688" y="330" width="210" height="250" rx="4"/>
+    <text x="793" y="468" text-anchor="middle" class="big">30</text>
+    <text x="793" y="368" text-anchor="middle" class="small-label">2</text>
+
+    <rect class="box" x="898" y="330" width="210" height="250" rx="4"/>
+    <text x="1003" y="468" text-anchor="middle" class="big">40</text>
+    <text x="1003" y="368" text-anchor="middle" class="small-label">3</text>
+
+    <rect class="box" x="1108" y="330" width="210" height="250" rx="4"/>
+    <text x="1213" y="468" text-anchor="middle" class="big">50</text>
+    <text x="1213" y="368" text-anchor="middle" class="small-label">4</text>
+  </g>
+
+  <!-- size arrow -->
+  <line x1="280" y1="620" x2="1320" y2="620" stroke="#0d3b5c" stroke-width="6"/>
+  <polyline points="280,620 330,620 330,600 280,600" fill="none" stroke="#0d3b5c" stroke-width="4"/>
+  <polyline points="1320,620 1270,620 1270,600 1320,600" fill="none" stroke="#0d3b5c" stroke-width="4"/>
+  <text x="800" y="670" text-anchor="middle" class="big-dark">Size = 5 (fixed)</text>
+
+  <!-- Bottom panel -->
+  <rect x="60" y="710" width="1480" height="140" rx="22" fill="#eef2f4" stroke="#3d4f5f" stroke-width="4"/>
+
+  <g>
+    <circle cx="130" cy="790" r="32" fill="#ea7d25"/>
+    <text x="130" y="802" text-anchor="middle" class="orange-text">1</text>
+    <text x="180" y="805" class="dark-label">Size fixed at compile time</text>
+
+    <circle cx="730" cy="790" r="32" fill="#ea7d25"/>
+    <text x="730" y="802" text-anchor="middle" class="orange-text">2</text>
+    <text x="780" y="805" class="dark-label">Contiguous memory allocation</text>
+
+    <circle cx="1320" cy="790" r="32" fill="#ea7d25"/>
+    <text x="1320" y="802" text-anchor="middle" class="orange-text">3</text>
+    <text x="1370" y="805" class="dark-label">Fast indexed access</text>
+  </g>
+
+  <!-- code box -->
+  <rect x="995" y="310" width="430" height="130" rx="16" fill="#f1dfc3" stroke="#2e3d45" stroke-width="4"/>
+  <text x="1018" y="345" class="dark-label" font-size="32">Example (SystemVerilog)</text>
+  <text x="1038" y="395" font-family="Courier New, monospace" font-size="34" fill="#0d3b5c">int arr[5] = '{10, 20, 30, 40, 50};</text>
+</svg>
