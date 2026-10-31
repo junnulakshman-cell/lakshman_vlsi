@@ -23,6 +23,7 @@ module fork_join_constructs_tb;
     end
   endtask
 
+  // Example: fork ... join
   initial begin
     $display("[%0t] Example: fork...join", $time);
     fork
@@ -33,6 +34,7 @@ module fork_join_constructs_tb;
     $display("[%0t] Parent resumes after fork...join", $time);
   end
 
+  // Example: fork ... join_any
   initial begin
     #100;
     $display("[%0t] Example: fork...join_any", $time);
@@ -41,9 +43,10 @@ module fork_join_constructs_tb;
       wait_operation();
       write_operation();
     join_any
-    $display("[%0t] Parent resumes after first child finishes", $time);
+    $display("[%0t] Parent resumes after the first child finishes", $time);
   end
 
+  // Example: fork ... join_none
   initial begin
     #200;
     $display("[%0t] Example: fork...join_none", $time);
@@ -54,7 +57,7 @@ module fork_join_constructs_tb;
     join_none
     $display("[%0t] Parent continues immediately", $time);
     #100;
-    wait fork;
+    wait fork; // wait for all spawned child processes to complete
     $display("[%0t] All child processes completed", $time);
   end
 
@@ -62,14 +65,14 @@ endmodule
 
 // Expected output:
 // [0] Example: fork...join
-// [30] READ: operation complete
-// [30] WAIT: operation complete
+// [10] READ: operation complete
+// [20] WAIT: operation complete
 // [30] WRITE: operation complete
 // [30] Parent resumes after fork...join
 //
 // [100] Example: fork...join_any
 // [110] READ: operation complete
-// [110] Parent resumes after first child finishes
+// [110] Parent resumes after the first child finishes
 //
 // [200] Example: fork...join_none
 // [200] Parent continues immediately
