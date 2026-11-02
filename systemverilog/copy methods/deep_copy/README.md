@@ -22,6 +22,8 @@ The purpose is to demonstrate how deep copy creates independent objects so that 
 - Verify that changes to the source object do not affect the copied object.
 
 ---
+<img width="889" height="2268" alt="image" src="https://github.com/user-attachments/assets/2f400859-d83c-462a-99aa-b703650c56fa" />
+<img width="2728" height="2268" alt="image" src="https://github.com/user-attachments/assets/424223c0-6e58-43a3-b3fc-4fd299f0d2ae" />
 
 ## 3. Class Structure
 
@@ -423,4 +425,4 @@ v.pck.count = this.pck.count;
 Deep copy is useful in SystemVerilog testbenches when transactions, packets, or objects must be copied without sharing mutable nested objects.
 
 **Key takeaway:** Copying the values of class properties is not enough when a class contains handles to other class objects. Those nested objects must also be created separately to achieve an independent deep copy.
-<img width="1536" height="1024" alt="image" src="https://github.com/user-attachments/assets/3b8a372c-c7b6-4db0-a67b-3231d0f468d2" />
+
