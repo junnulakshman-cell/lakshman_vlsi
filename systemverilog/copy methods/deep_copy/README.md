@@ -12,7 +12,7 @@ The `vlsi` class contains a `copy()` method that creates a new `vlsi` object and
 The purpose is to demonstrate how deep copy creates independent objects so that modifying one object does not affect the other.
 
 ---
-# 1. Concept Diagram
+# 2. Concept Diagram
 
 ## Before Handle Assignment
 
@@ -74,7 +74,7 @@ style OBJ fill:#fff3cd,stroke:#f57c00,stroke-width:4px
 ✅ Only the handle/reference is copied
 
 ✅ Changes through one handle are visible through the other
-## 2. Objective
+## 3. Objective
 
 - Understand class handles in SystemVerilog.
 - Understand shallow copy and deep copy.
@@ -83,8 +83,28 @@ style OBJ fill:#fff3cd,stroke:#f57c00,stroke-width:4px
 - Verify that changes to the source object do not affect the copied object.
 
 ---
+```mermaid
+flowchart LR
 
-## 3. Class Structure
+    S1["① Create Object A<br/>v1 = new()"]
+
+    S2["② Create Object B<br/>v2 = new()"]
+
+    S3["③ Assign Values<br/>v2.a = 30<br/>v2.b = 40"]
+
+    S4["④ Handle Assignment<br/>v1 = v2"]
+
+    S5["⑤ Both Handles<br/>Reference Same Object"]
+
+    S1 --> S2 --> S3 --> S4 --> S5
+
+style S1 fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+style S2 fill:#e8f5e9,stroke:#388e3c,stroke-width:2px
+style S3 fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+style S4 fill:#fff3cd,stroke:#f57c00,stroke-width:3px
+style S5 fill:#c8e6c9,stroke:#2e7d32,stroke-width:3px
+```
+## 4. Class Structure
 
 ```text
                  vlsi class
@@ -105,7 +125,7 @@ The `pck` member is a class handle. It refers to a separate `packet` object.
 
 ---
 
-## 4. SystemVerilog Code
+## 5. SystemVerilog Code
 
 ### File: `deep_copy_nested_class.sv`
 
@@ -204,7 +224,7 @@ endmodule
 
 ---
 
-## 5. Explanation of Deep Copy
+## 6. Explanation of Deep Copy
 
 ### Step 1: Create the source object
 
@@ -271,7 +291,7 @@ This is the key operation that makes the nested object independent.
 
 ---
 
-## 6. Expected Output
+## 7. Expected Output
 
 ```text
 --- Before Deep Copy ---
@@ -329,7 +349,7 @@ This confirms that the deep copy created independent objects.
 
 ---
 
-## 7. Shallow Copy vs Deep Copy
+## 8. Shallow Copy vs Deep Copy
 
 ### Shallow Copy
 
@@ -369,7 +389,7 @@ The objects are independent.
 
 ---
 
-## 8. Important SystemVerilog Concept
+## 9. Important SystemVerilog Concept
 
 ### Why do we use `new()` twice?
 
@@ -403,7 +423,7 @@ v.pck.count = this.pck.count;
 
 ---
 
-## 9. Important Note About `output`
+## 10. Important Note About `output`
 
 The method is declared as:
 
@@ -438,7 +458,7 @@ You can simplify the testbench by removing the initial `v1 = new();`.
 
 ---
 
-## 10. Interview Questions
+## 11. Interview Questions
 
 **Q1. What is deep copy in SystemVerilog?**
 
