@@ -12,7 +12,68 @@ The `vlsi` class contains a `copy()` method that creates a new `vlsi` object and
 The purpose is to demonstrate how deep copy creates independent objects so that modifying one object does not affect the other.
 
 ---
+# 1. Concept Diagram
 
+## Before Handle Assignment
+
+```mermaid
+flowchart TB
+
+    subgraph BEFORE["Before Handle Assignment"]
+        V1["v1"]
+        V2["v2"]
+
+        O1["🟪 vlsi Object A<br/>a = 0<br/>b = 0"]
+
+        O2["🟪 vlsi Object B<br/>a = 30<br/>b = 40"]
+
+        V1 --> O1
+        V2 --> O2
+    end
+
+style V1 fill:#bbdefb,stroke:#1976d2,stroke-width:2px
+style V2 fill:#bbdefb,stroke:#1976d2,stroke-width:2px
+
+style O1 fill:#f3e5f5,stroke:#7b1fa2,stroke-width:3px
+style O2 fill:#f3e5f5,stroke:#7b1fa2,stroke-width:3px
+```
+
+---
+
+## Handle Assignment
+
+```systemverilog
+v1 = v2;
+```
+
+---
+
+## After Handle Assignment
+
+```mermaid
+flowchart TB
+
+    V1["v1"]
+    V2["v2"]
+
+    OBJ["🟨 Shared Object<br/>a = 30<br/>b = 40"]
+
+    V1 --> OBJ
+    V2 --> OBJ
+
+style V1 fill:#bbdefb,stroke:#1976d2,stroke-width:2px
+style V2 fill:#c8e6c9,stroke:#2e7d32,stroke-width:2px
+
+style OBJ fill:#fff3cd,stroke:#f57c00,stroke-width:4px
+```
+
+✅ Both handles point to the **same object**
+
+✅ No new object is created
+
+✅ Only the handle/reference is copied
+
+✅ Changes through one handle are visible through the other
 ## 2. Objective
 
 - Understand class handles in SystemVerilog.
@@ -22,8 +83,6 @@ The purpose is to demonstrate how deep copy creates independent objects so that 
 - Verify that changes to the source object do not affect the copied object.
 
 ---
-<img width="889" height="2268" alt="image" src="https://github.com/user-attachments/assets/2f400859-d83c-462a-99aa-b703650c56fa" />
-<img width="2728" height="2268" alt="image" src="https://github.com/user-attachments/assets/424223c0-6e58-43a3-b3fc-4fd299f0d2ae" />
 
 ## 3. Class Structure
 
