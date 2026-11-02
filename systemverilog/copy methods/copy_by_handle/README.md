@@ -31,31 +31,15 @@ The testbench demonstrates how modifying an object through one handle affects th
 
 ### Before Handle Assignment
 
-```text
-v1 ─────► Object A
-          a = 0
-          b = 0
+<img width="2527" height="2268" alt="image" src="https://github.com/user-attachments/assets/a739c595-142a-46cf-90ff-6c6240ca04b3" />
 
-v2 ─────► Object B
-          a = 30
-          b = 40
-```
 
 Initially, `v1` and `v2` refer to separate objects.
 
 ### After Handle Assignment
 
-```systemverilog
-v1 = v2;
-```
+<img width="3978" height="2268" alt="image" src="https://github.com/user-attachments/assets/4ba71fcc-172d-4e2d-9db7-d63bfbdd3871" />
 
-```text
-v1 ─────┐
-        │
-        ├────► Same Object
-        │       a = 30
-v2 ─────┘       b = 40
-```
 
 Both handles refer to the same object.
 
