@@ -216,4 +216,4 @@ Both handles refer to the same object. Therefore, modifying the object through o
 For independent objects, use a custom deep-copy method.
 
 **Key takeaway:** Shallow copy shares an object; deep copy creates independent object instances.
-<img width="1536" height="1024" alt="image" src="https://github.com/user-attachments/assets/ea3a3044-d4d8-488e-b00d-b130e490a3c1" />
+{"orientation":"landscape","transparent_background":false}
