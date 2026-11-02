@@ -31,14 +31,14 @@ The testbench demonstrates how modifying an object through one handle affects th
 
 ### Before Handle Assignment
 
-<img width="2527" height="2268" alt="image" src="https://github.com/user-attachments/assets/a739c595-142a-46cf-90ff-6c6240ca04b3" />
+<img width="252" height="226" alt="image" src="https://github.com/user-attachments/assets/a739c595-142a-46cf-90ff-6c6240ca04b3" />
 
 
 Initially, `v1` and `v2` refer to separate objects.
 
 ### After Handle Assignment
 
-<img width="3978" height="2268" alt="image" src="https://github.com/user-attachments/assets/4ba71fcc-172d-4e2d-9db7-d63bfbdd3871" />
+<img width="397" height="226" alt="image" src="https://github.com/user-attachments/assets/4ba71fcc-172d-4e2d-9db7-d63bfbdd3871" />
 
 
 Both handles refer to the same object.
