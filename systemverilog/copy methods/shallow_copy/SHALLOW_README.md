@@ -15,7 +15,61 @@ This example contains:
 
 ## 🖼️ Concept Diagram
 
-![SystemVerilog Shallow Copy Diagram](images/shallow_copy_diagram.png)
+ ┌───────┐
+ │  v1   │
+ └───┬───┘
+     │
+     ▼
+┌─────────────────────┐
+│   Shared vlsi Obj   │
+│                     │
+│   a = 14            │
+│   b = 42            │
+│                     │
+│   pck ───────┐      │
+└──────────────┼──────┘
+               │
+               ▼
+        ┌─────────────┐
+        │ packet Obj  │
+        │             │
+        │ count = 500 │
+        └─────────────┘
+
+ ┌───────┐
+ │  v2   │
+ └───┬───┘
+     │
+     └────────────► Same vlsi Object
+After Modifying v2
+
+Since v1 and v2 refer to the same object:
+      ┌───────┐
+ │  v1   │
+ └───┬───┘
+     │
+     ▼
+┌─────────────────────┐
+│   Shared vlsi Obj   │
+│                     │
+│   a = 40            │
+│   b = 50            │
+│                     │
+│   pck ───────┐      │
+└──────────────┼──────┘
+               │
+               ▼
+        ┌─────────────┐
+        │ packet Obj  │
+        │             │
+        │ count = 600 │
+        └─────────────┘
+
+ ┌───────┐
+ │  v2   │
+ └───┬───┘
+     │
+     └────────────► Same vlsi Object
 
 ## 🎯 Objective
 
